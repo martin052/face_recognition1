@@ -96,7 +96,7 @@ class App extends Component {
     //   body: raw
     // };
 
-    fetch('http://localhost:3000/imageurl', {
+    fetch('https://mybackend-3m9h.onrender.com/imageurl', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -109,7 +109,7 @@ class App extends Component {
       .then(data => {
 
         if (data) {
-          fetch('http://localhost:3000/image', {
+          fetch('https://mybackend-3m9h.onrender.com/image', {
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
