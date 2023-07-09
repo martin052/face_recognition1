@@ -76,42 +76,16 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    // const USER_ID = 'martin0521992';//(the code by your name)
-    // const PAT = '0f7e8cf552b142229f8f2332f504919b';//(your Clarifai api key)
-    // const APP_ID = 'Face_detect';//(what you named your app in Clarifai)
-    // const MODEL_ID = 'face-detection';
-    // const MODEL_VERSION_ID = '5e026c5fae004ed4a83263ebaabec49e';
-    // const IMAGE_URL = this.state.input;
-    // const raw = JSON.stringify({
-    //   "user_app_id": {
-    //     "user_id": USER_ID,
-    //     "app_id": APP_ID
-    //   },
-    //   "inputs": [{ "data": { "image": { "url": IMAGE_URL } } }]
-    // });
-
-    // const requestOptions = {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     // eslint-disable-next-line
-    //     'Authorization': 'Key ' + PAT
-    //   },
-    //   body: raw
-    // };
 
     fetch('https://mybackend-3m9h.onrender.com/imageurl', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        input: this.state.input
+        id: this.state.input
       })
     })
-
-      // fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/versions/" + MODEL_VERSION_ID + "/outputs", requestOptions)
       .then(response => response.json())
       .then(data => {
-
         if (data) {
           fetch('https://mybackend-3m9h.onrender.com/image', {
             method: 'put',
@@ -124,17 +98,13 @@ class App extends Component {
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count }))
             })
-            .catch(console.log)
+            .catch(console.log);
         }
-        // console.log(data);
-        this.displayFaceBox(this.calculateFaceLocation(data))
-
+        this.displayFaceBox(this.calculateFaceLocation(data));
       })
-      //this.calculateFaceLocation(
-      .then(result => console.log(result))
       .catch(error => console.log('error', error));
-
   }
+
 
   onRouteChange = (route) => {
     if (route === 'signout') {
