@@ -46,6 +46,7 @@ class App extends Component {
 
 
   calculateFaceLocation = (data) => {
+    console.log(data);
     // const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
     const clarifaiFace = data.outputs[0].data.regions.map(region => region.region_info.bounding_box);
     const image = document.getElementById('inputImage');
@@ -105,7 +106,7 @@ class App extends Component {
     })
 
       // fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/versions/" + MODEL_VERSION_ID + "/outputs", requestOptions)
-      // .then(response => response.json())
+      .then(response => response.json())
       .then(data => {
 
         if (data) {
