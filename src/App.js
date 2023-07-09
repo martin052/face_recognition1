@@ -46,7 +46,10 @@ class App extends Component {
 
 
   calculateFaceLocation = (data) => {
-    console.log(data);
+    if (!data || !data.outputs || !data.outputs[0] || !data.outputs[0].data || !data.outputs[0].data.regions) {
+      console.log('Invalid response format:', data);
+      return [];
+    }
     // const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
     const clarifaiFace = data.outputs[0].data.regions.map(region => region.region_info.bounding_box);
     const image = document.getElementById('inputImage');
