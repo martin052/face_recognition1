@@ -46,23 +46,16 @@ class App extends Component {
 
 
   calculateFaceLocation = (data) => {
-    if (!data || !data.outputs || !data.outputs[0] || !data.outputs[0].data || !data.outputs[0].data.regions) {
-      console.log('Invalid response format:', data);
-      return [];
-    }
-    // const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const clarifaiFace = data.outputs[0].data.regions.map(region => region.region_info.bounding_box);
-    const image = document.getElementById('inputImage');
+    const image = document.getElementById('inputimage');
     const width = Number(image.width);
     const height = Number(image.height);
-    return clarifaiFace.map(face => {
-      return {
-        leftCol: face.left_col * width,
-        topRow: face.top_row * height,
-        rightCol: width - (face.right_col * width),
-        bottomRow: height - (face.bottom_row * height)
-      }
-    });
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+    }
   }
 
   displayFaceBox = (boxes) => {
