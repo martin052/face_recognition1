@@ -81,12 +81,12 @@ class App extends Component {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        image: this.state.input
+        id: this.state.input
       })
     })
-      .then(response => response.json())
-      .then(data => {
-        if (data) {
+      .then(result => result.json())
+      .then(result => {
+        if (result) {
           fetch('https://mybackend-3m9h.onrender.com/image', {
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
@@ -94,13 +94,13 @@ class App extends Component {
               id: this.state.user.id
             })
           })
-            .then(response => response.json())
+            .then(result => result.json())
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count }))
             })
             .catch(console.log);
         }
-        this.displayFaceBox(this.calculateFaceLocation(data));
+        this.displayFaceBox(this.calculateFaceLocation(result));
       })
       .catch(error => console.log('error', error));
   }
