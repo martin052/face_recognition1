@@ -9,11 +9,9 @@ import ParticlesBg from 'particles-bg';
 import Signin from './Component/Signin/Signin';
 import Register from './Component/Register/Register';
 
-
 const initialState = {
   input: '',
   imageUrl: '',
-  // box: {},
   boxes: [],
   route: 'signin',
   isSignedIn: false,
@@ -24,7 +22,7 @@ const initialState = {
     entries: 0,
     joined: ''
   }
-}
+};
 
 class App extends Component {
   constructor() {
@@ -41,16 +39,14 @@ class App extends Component {
         entries: data.entries,
         joined: data.joined
       }
-    })
-  }
-
+    });
+  };
 
   calculateFaceLocation = (data) => {
     if (!data || !data.outputs || !data.outputs[0] || !data.outputs[0].data || !data.outputs[0].data.regions) {
       console.log('Invalid response format:', data);
       return [];
     }
-    // const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
     const clarifaiFace = data.outputs[0].data.regions.map(region => region.region_info.bounding_box);
     const image = document.getElementById('inputImage');
     const width = Number(image.width);
@@ -61,18 +57,17 @@ class App extends Component {
         topRow: face.top_row * height,
         rightCol: width - (face.right_col * width),
         bottomRow: height - (face.bottom_row * height)
-      }
+      };
     });
-  }
+  };
 
   displayFaceBox = (boxes) => {
     this.setState({ boxes: boxes });
-  }
-
+  };
 
   onInputChange = (event) => {
     this.setState({ input: event.target.value });
-  }
+  };
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
@@ -81,17 +76,17 @@ class App extends Component {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        id: this.state.input
+        input: this.state.input
       })
     })
-      .then(result => {
-        if (!result.ok) {
+      .then(response => {
+        if (!response.ok) {
           throw new Error('API request failed');
         }
-        return result.json();
+        return response.json();
       })
-      .then(result => {
-        if (result) {
+      .then(response => {
+        if (response) {
           fetch('https://mybackend-3m9h.onrender.com/image', {
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
@@ -99,11 +94,11 @@ class App extends Component {
               id: this.state.user.id
             })
           })
-            .then(result => {
-              if (!result.ok) {
+            .then(response => {
+              if (!response.ok) {
                 throw new Error('API request failed');
               }
-              return result.json();
+              return response.json();
             })
             .then(count => {
               this.setState(prevState => ({
@@ -112,48 +107,41 @@ class App extends Component {
             })
             .catch(console.log);
         }
-        this.displayFaceBox(this.calculateFaceLocation(result));
+        this.displayFaceBox(this.calculateFaceLocation(response));
       })
       .catch(error => console.log('API request error:', error));
-  }
-
-
+  };
 
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState(initialState)
+      this.setState(initialState);
     } else if (route === 'home') {
-      this.setState({ isSignedIn: true })
+      this.setState({ isSignedIn: true });
     }
     this.setState({ route: route });
-  }
+  };
 
   render() {
-
     const { isSignedIn, imageUrl, route, boxes } = this.state;
     return (
-      <div className="App" >
+      <div className="App">
         <ParticlesBg type="cobweb" num={80} bg={true} />
-        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}></Navigation>
-        {route === 'home'
-          ? <div>
-            <Logo></Logo>
-            <Rank name={this.state.user.name} entries={this.state.user.entries}></Rank>
-            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}></ImageLinkForm>
-            <FaceRecognition boxes={boxes} imageUrl={imageUrl}></FaceRecognition>
+        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+        {route === 'home' ? (
+          <div>
+            <Logo />
+            <Rank name={this.state.user.name} entries={this.state.user.entries} />
+            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+            <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
           </div>
-          : (
-            route === 'signin'
-              ? <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange}></Signin>
-              : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}></Register>
-
-          )}
-
-
+        ) : route === 'signin' ? (
+          <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
+        )}
       </div>
     );
   }
 }
-
 
 export default App;
