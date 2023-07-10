@@ -84,7 +84,12 @@ class App extends Component {
         id: this.state.input
       })
     })
-      .then(result => result.json())
+      .then(result => {
+        if (!result.ok) {
+          throw new Error('API request failed');
+        }
+        return result.json();
+      })
       .then(result => {
         if (result) {
           fetch('https://mybackend-3m9h.onrender.com/image', {
@@ -94,16 +99,24 @@ class App extends Component {
               id: this.state.user.id
             })
           })
-            .then(result => result.json())
+            .then(result => {
+              if (!result.ok) {
+                throw new Error('API request failed');
+              }
+              return result.json();
+            })
             .then(count => {
-              this.setState(Object.assign(this.state.user, { entries: count }))
+              this.setState(prevState => ({
+                user: { ...prevState.user, entries: count }
+              }));
             })
             .catch(console.log);
         }
         this.displayFaceBox(this.calculateFaceLocation(result));
       })
-      .catch(error => console.log('error', error));
+      .catch(error => console.log('API request error:', error));
   }
+
 
 
   onRouteChange = (route) => {
